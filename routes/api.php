@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\UsersController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -10,13 +12,23 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-Route::get('/users', [UsersController::class, 'index']);
-Route::middleware('auth')->get('/user/{id}', [UsersController::class, 'show']);
+//login
+Route::post('login', [LoginController::class, 'login']);
 
-Route::post('/users/create', [UsersController::class, 'store']);
+//get authenticated user
+Route::get('/user', [UsersController::class, 'index']);
 
-Route::get('login', [UsersController::class, 'logIn']);
+// update authenticated user
+Route::patch('/user', [UsersController::class, 'update']);
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// (soft)delete user
+Route::delete('/user/{id}', [UsersController::class, 'destroy']);
+
+/*
+|--------------------------------------------------------------------------
+| Service Routes
+|--------------------------------------------------------------------------
+*/
+
+//create user
+Route::post('/service/user/create', [RegisterController::class, 'create'])->middleware('service');

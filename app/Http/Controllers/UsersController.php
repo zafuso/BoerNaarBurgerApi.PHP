@@ -16,11 +16,12 @@ class UsersController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return User[]|Collection|Response
+     * @param User $user
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
-        return User::all();
+        return $this->authUser();
     }
 
     protected function validator(array $data)
@@ -64,13 +65,14 @@ class UsersController extends Controller
      * Update the specified resource in storage.
      *
      * @param Request $request
-     * @param int $id
-     * @return User|User[]|bool|Collection|Model
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        $user = User::find($id);
+        $user = $this->authUser();
+
         $user->update($request->all());
+
         return $user;
     }
 
@@ -78,22 +80,13 @@ class UsersController extends Controller
      * Remove the specified resource from storage.
      *
      * @param int $id
-     * @return int
+     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy($id)
     {
-        return User::destroy($id);
+        User::destroy($id);
+
+        return response()->json(['user' => 'Successfully deleted user ' . $id]);
     }
 
-    public function logIn(Request $request) {
-        $credentials = $request->only(['email','password']);
-
-        $token = auth()->attempt($credentials);
-
-        return $token;
-    }
-
-    public function getUser(Request $request) {
-
-    }
 }
