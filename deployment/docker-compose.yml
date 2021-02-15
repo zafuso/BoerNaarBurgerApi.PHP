@@ -3,6 +3,7 @@ version: "3.1"
 services:
   boer-naar-burger-api-webserver:
     image: nginx:alpine
+    restart: always
     container_name: boer-naar-burger-api-webserver
     working_dir: /application
     volumes:
@@ -15,6 +16,7 @@ services:
 
   boer-naar-burger-api-php-fpm:
     build: ./images/php-fpm
+    restart: always
     container_name: boer-naar-burger-api-php-fpm
     working_dir: /application
     volumes:
