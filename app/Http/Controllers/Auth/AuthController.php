@@ -5,11 +5,13 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateUser;
 use App\Mail\ResetPasswordMail;
+use App\Models\PasswordReset;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -63,16 +65,31 @@ class AuthController extends Controller
     }
 
     public function resetPassword(Request $request) {
-        if(!$this->validateEmail($request->email)) {
+        $email = $request->email;
+        if(!$this->validateEmail($email)) {
             return response()->json(['error' => 'Het opgegeven e-mailadres is onbekend.'], Response::HTTP_NOT_FOUND);
         }
 
-        Mail::to($request->email)->send(new ResetPasswordMail);
+        $token = $this->createToken($email);
+        Mail::to($email)->send(new ResetPasswordMail);
         return response()->json(['message' => 'Wachtwoord reset e-mail is succesvol verzonden.'], Response::HTTP_OK);
     }
 
     public function validateEmail($email) {
         return !!User::where(['email' => $email])->first();
+    }
+
+    public function createToken($email)
+    {
+        $token = Str::random(60);
+        $this->saveToken($token, $email);
+    }
+
+    public function saveToken($token, $email) {
+        $passwordReset = new PasswordReset;
+        $passwordReset->email = $email;
+        $passwordReset->token = $token;
+        $passwordReset->save();
     }
 
 }
