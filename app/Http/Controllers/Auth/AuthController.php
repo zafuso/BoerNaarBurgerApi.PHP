@@ -4,9 +4,12 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateUser;
+use App\Mail\ResetPasswordMail;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
 {
@@ -26,7 +29,7 @@ class AuthController extends Controller
         $credentials = $request->only(['email','password']);
 
         if(!$token = auth()->attempt($credentials)) {
-            return response()->json(['error' => 'Het opgegeven e-mailadres of wachtwoord is incorrect.'], 401);
+            return response()->json(['error' => 'Het opgegeven e-mailadres of wachtwoord is incorrect.'], Response::HTTP_UNAUTHORIZED);
         }
 
         return $this->respondWithToken($token);
@@ -51,13 +54,25 @@ class AuthController extends Controller
     public function logout()
     {
         auth()->logout();
-
-        return response()->json(['message' => 'Successfully logged out']);
+        return response()->json(['message' => 'Uitloggen succesvol.']);
     }
 
     public function refresh()
     {
         return $this->respondWithToken(auth()->refresh());
+    }
+
+    public function resetPassword(Request $request) {
+        if(!$this->validateEmail($request->email)) {
+            return response()->json(['error' => 'Het opgegeven e-mailadres is onbekend.'], Response::HTTP_NOT_FOUND);
+        }
+
+        Mail::to($request->email)->send(new ResetPasswordMail);
+        return response()->json(['message' => 'Wachtwoord reset e-mail is succesvol verzonden.'], Response::HTTP_OK);
+    }
+
+    public function validateEmail($email) {
+        return !!User::where(['email' => $email])->first();
     }
 
 }
