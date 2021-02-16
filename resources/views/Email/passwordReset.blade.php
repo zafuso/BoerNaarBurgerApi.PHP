@@ -7,7 +7,7 @@ Iemand heeft een verzoek ingediend om je Boer naar Burger wachtwoord te resetten
 Reset Wachtwoord
 @endcomponent
 
-Heb je deze e-mail niet aangevraagd? Negeer dit bericht, je wachtwoord blijf veilig en zal niet worden gewijzigd!
+Heb je deze e-mail niet aangevraagd? Negeer dit bericht, je wachtwoord blijft veilig en zal niet worden gewijzigd!
 
 Met vriendelijke groeten,<br>
 <strong>Boer naar Burger</strong>

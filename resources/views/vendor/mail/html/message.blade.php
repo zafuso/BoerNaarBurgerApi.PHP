@@ -2,7 +2,7 @@
 {{-- Header --}}
 @slot('header')
 @component('mail::header', ['url' => config('app.url')])
-<img src="{{asset('./images/logo_bnb.png')}}" class="logo" alt="{{config('app.name')}}">
+<img src="https://i.imgur.com/HDOV70c.png" class="logo" alt="{{config('app.name')}}">
 @endcomponent
 @endslot
 
@@ -21,7 +21,7 @@
 {{-- Footer --}}
 @slot('footer')
 @component('mail::footer')
-    <img src="{{asset('./images/footer_b2b.jpg')}}" style="width:100%;" alt="{{config('app.name')}}">
+    <img src="https://i.imgur.com/IzEiSXt.jpg" style="width:100%;" alt="{{config('app.name')}}">
 @endcomponent
 @endslot
 @endcomponent
