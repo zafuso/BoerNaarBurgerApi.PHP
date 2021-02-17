@@ -36,7 +36,16 @@ class AuthController extends Controller
             return response()->json(['error' => 'Het opgegeven e-mailadres of wachtwoord is incorrect.'], Response::HTTP_UNAUTHORIZED);
         }
 
+        if($request->remember) {
+            $rememberToken = Str::random(60);
+            setcookie('rememberToken', $rememberToken, time() + (86400 * 30));
+            $user = User::whereEmail($request->email)->firstOrFail();
+            $user->remember_token = $rememberToken;
+            $user->update();
+        }
+
         return $this->respondWithToken($token);
+
     }
 
     public function me()
