@@ -12,15 +12,17 @@ class ResetPasswordMail extends Mailable
     use Queueable, SerializesModels;
 
     public string $token;
+    private $email;
 
     /**
      * Create a new message instance.
      *
      * @param $token
      */
-    public function __construct($token)
+    public function __construct($token, $email)
     {
         $this->token = $token;
+        $this->email = $email;
     }
 
     /**
@@ -33,7 +35,8 @@ class ResetPasswordMail extends Mailable
         return $this->from('info@boernaarburger.ml','Boer naar Burger')
             ->subject('Reset jouw Boer naar Burger wachtwoord')
             ->markdown('Email.passwordReset')->with([
-                'token' => $this->token
+                'token' => $this->token,
+                'email' => $this->email
             ]);
     }
 }

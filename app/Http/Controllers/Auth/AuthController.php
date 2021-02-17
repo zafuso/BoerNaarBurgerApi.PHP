@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Requests\CreateUserRequest;
+use App\Http\Requests\ResetPasswordRequest;
 use App\Mail\ResetPasswordMail;
 use App\Models\PasswordReset;
 use App\Models\User;
@@ -65,14 +66,14 @@ class AuthController extends Controller
         return $this->respondWithToken(auth()->refresh());
     }
 
-    public function resetPassword(Request $request) {
+    public function resetPassword(ResetPasswordRequest $request) {
         $email = $request->email;
         if(!$this->validateEmail($email)) {
-            return response()->json(['error' => 'Het opgegeven e-mailadres is onbekend.'], Response::HTTP_NOT_FOUND);
+            return response()->json(['errors' => ['email' => 'Het opgegeven e-mailadres is onbekend.']], Response::HTTP_NOT_FOUND);
         }
 
         $token = $this->createToken($email);
-        Mail::to($email)->send(new ResetPasswordMail($token->token));
+        Mail::to($email)->send(new ResetPasswordMail($token->token, $token->email));
         return response()->json(['message' => 'Wachtwoord reset e-mail is succesvol verzonden.'], Response::HTTP_OK);
     }
 
@@ -90,6 +91,7 @@ class AuthController extends Controller
 
         $token = Str::random(60);
         $this->saveToken($token, $email);
+        $token = PasswordReset::where(['email' => $email])->first();
         return $token;
     }
 
