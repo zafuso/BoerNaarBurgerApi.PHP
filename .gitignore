@@ -11,3 +11,17 @@ Homestead.json
 Homestead.yaml
 npm-debug.log
 yarn-error.log
+.idea
+/public/EdevelopmentBoerNaarBurgerApi.PHPstorageclockwork/
+/public/EdevelopmentBoerNaarBurgerApi.PHPstorageframework/
+/public/EdevelopmentBoerNaarBurgerApi.PHPstoragelogs/
+resources/views/Email/passwordReset.blade.php
+public/EdevelopmentBoerNaarBurgerApi.PHPstoragelogs/laravel.log
+public/EdevelopmentBoerNaarBurgerApi.PHPstorageframework/cache/data/d3/db/d3db85086ae28064cc2de9c04544d49438af73e5
+public/EdevelopmentBoerNaarBurgerApi.PHPstorageframework/cache/data/24/2a/242a9c7eb9fef62705b4c972a02bbee861a62c82
+.idea/workspace.xml
+resources/views/Email/passwordReset.blade.php
+public/EdevelopmentBoerNaarBurgerApi.PHPstoragelogs/laravel.log
+public/EdevelopmentBoerNaarBurgerApi.PHPstorageframework/cache/data/d3/db/d3db85086ae28064cc2de9c04544d49438af73e5
+public/EdevelopmentBoerNaarBurgerApi.PHPstorageframework/cache/data/24/2a/242a9c7eb9fef62705b4c972a02bbee861a62c82
+.idea/workspace.xml
