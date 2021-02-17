@@ -18,6 +18,9 @@ Route::post('/login', [AuthController::class, 'login']);
 //password reset
 Route::post('/password-reset', [AuthController::class, 'resetPassword']);
 
+//change password
+Route::post('/change-password', [AuthController::class, 'changePassword']);
+
 /*
 |--------------------------------------------------------------------------
 | User Routes

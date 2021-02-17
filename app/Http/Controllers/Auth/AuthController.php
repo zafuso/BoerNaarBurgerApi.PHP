@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\CreateUser;
+use App\Http\Requests\ChangePasswordRequest;
+use App\Http\Requests\CreateUserRequest;
 use App\Mail\ResetPasswordMail;
 use App\Models\PasswordReset;
 use App\Models\User;
@@ -15,7 +16,7 @@ use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
-    protected function create(CreateUser $request)
+    protected function create(CreateUserRequest $request)
     {
         User::create([
             'first_name' => $request['first_name'],
@@ -71,7 +72,7 @@ class AuthController extends Controller
         }
 
         $token = $this->createToken($email);
-        Mail::to($email)->send(new ResetPasswordMail);
+        Mail::to($email)->send(new ResetPasswordMail($token->token));
         return response()->json(['message' => 'Wachtwoord reset e-mail is succesvol verzonden.'], Response::HTTP_OK);
     }
 
@@ -81,8 +82,15 @@ class AuthController extends Controller
 
     public function createToken($email)
     {
+        $oldToken = PasswordReset::where(['email' => $email])->first();
+
+        if($oldToken) {
+            return $oldToken;
+        }
+
         $token = Str::random(60);
         $this->saveToken($token, $email);
+        return $token;
     }
 
     public function saveToken($token, $email) {
@@ -90,6 +98,25 @@ class AuthController extends Controller
         $passwordReset->email = $email;
         $passwordReset->token = $token;
         $passwordReset->save();
+    }
+
+    public function changePassword(ChangePasswordRequest $request) {
+        return $this->getPasswordResetRow($request)->first() ? $this->updatePassword($request) : $this->notFound();
+    }
+
+    private function getPasswordResetRow($request) {
+        return PasswordReset::where(['email' => $request->email, 'token' => $request->resetToken])->firstOrFail();
+    }
+
+    private function notFound(){
+        return response()->json(['error' => 'E-mail adres incorrect of wachtwoord reset token verlopen.', Response::HTTP_UNPROCESSABLE_ENTITY]);
+    }
+
+    private function updatePassword($request){
+        $user = User::whereEmail($request->email)->firstOrFail();
+        $user->update(['password' => Hash::make($request->password)]);
+        $this->getPasswordResetRow($request)->delete();
+        return response()->json(['message' => 'Wachtwoord succesvol gewijzigd.'], Response::HTTP_CREATED);
     }
 
 }
