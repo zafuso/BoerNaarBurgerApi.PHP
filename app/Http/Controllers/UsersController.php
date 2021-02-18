@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Intervention\Image\Facades\Image;
 
 
 class UsersController extends Controller
@@ -65,13 +66,47 @@ class UsersController extends Controller
      * Update the specified resource in storage.
      *
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return User
      */
-    public function update(Request $request)
+    public function update(User $user)
     {
-        $user = $this->authUser();
+        $data = request()->validate([
+            'first_name'            => '',
+            'insertion'             => '',
+            'last_name'             => '',
+            'gender'                => '',
+            'email'                 => '',
+            'phone_number'          => '',
+            'street'                => '',
+            'house_number'          => '',
+            'zipcode'               => '',
+            'city'                  => '',
+            'country'               => '',
+            'iban'                  => '',
+            'company'               => '',
+            'vat_number'            => '',
+            'date_of_birth'         => '',
+            'has_accepted_terms'    => '',
+            'custom_field_1'        => '',
+            'custom_field_2'        => '',
+            'user_type_id'          => '',
+            'password'              => '',
+            'avatar'                => '',
+        ]);
 
-        $user->update($request->all());
+        if (request('avatar')) {
+            $imagePath = request('avatar')->store('uploads','public');
+
+            $avatar = Image::make(public_path("storage/{$imagePath}"))->fit(1000,1000);
+            $avatar->save();
+
+            $imageArray = ['avatar' => $imagePath];
+        }
+
+        auth()->user()->update(array_merge(
+            $data,
+            $imageArray ?? []
+        ));
 
         return $user;
     }
