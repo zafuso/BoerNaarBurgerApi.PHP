@@ -65,14 +65,13 @@ class UsersController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param Request $request
-     * @return User
+     * @param User $user
+     * @return \Illuminate\Contracts\Auth\Authenticatable
      */
     public function update(User $user)
     {
         $data = request()->validate([
             'first_name'            => '',
-            'insertion'             => '',
             'last_name'             => '',
             'gender'                => '',
             'email'                 => '',
@@ -91,22 +90,11 @@ class UsersController extends Controller
             'custom_field_2'        => '',
             'user_type_id'          => '',
             'password'              => '',
-            'avatar'                => '',
+            'profile_picture'       => '',
         ]);
 
-        if (request('avatar')) {
-            $imagePath = request('avatar')->store('uploads','public');
-
-            $avatar = Image::make(public_path("storage/{$imagePath}"))->fit(1000,1000);
-            $avatar->save();
-
-            $imageArray = ['avatar' => $imagePath];
-        }
-
-        auth()->user()->update(array_merge(
-            $data,
-            $imageArray ?? []
-        ));
+        $user = auth()->user();
+        $user->update($data);
 
         return $user;
     }
